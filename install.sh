@@ -126,6 +126,18 @@ echo -e "${BLUE}[5/8] Installing Python packages...${NC}"
 
 pip install -r requirements.txt
 
+# Install wake word dependencies separately (Pi needs special handling)
+if [ "$IS_RASPBERRY_PI" = true ]; then
+    echo -e "${YELLOW}Installing Raspberry Pi specific packages...${NC}"
+    # Install tflite-runtime from piwheels
+    pip install --extra-index-url https://google-coral.github.io/py-repo/ tflite-runtime || \
+    pip install tflite-runtime || \
+    echo -e "${YELLOW}⚠ tflite-runtime not available, wake word may not work${NC}"
+fi
+
+# Install openwakeword and onnxruntime
+pip install onnxruntime openwakeword || echo -e "${YELLOW}⚠ openwakeword install failed${NC}"
+
 echo -e "${GREEN}✓ Python packages installed${NC}"
 
 # ============================================

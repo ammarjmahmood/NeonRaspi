@@ -1,4 +1,4 @@
-# Neon Pi Python Dependencies
+# Son of Anton Python Dependencies
 
 # Web Framework
 fastapi>=0.109.0
@@ -11,9 +11,9 @@ pyaudio>=0.2.14
 sounddevice>=0.4.6
 numpy>=1.26.0
 
-# Wake Word Detection
-openwakeword>=0.5.1
-onnxruntime>=1.17.0
+# Wake Word Detection - installed separately in install.sh for Pi compatibility
+# openwakeword>=0.5.1
+# onnxruntime>=1.17.0
 
 # Speech to Text (Whisper)
 faster-whisper>=0.10.0
@@ -26,9 +26,6 @@ elevenlabs>=1.0.0
 
 # Spotify
 spotipy>=2.23.0
-
-# MCP Client
-# mcp>=1.0.0  # Uncomment when available
 
 # Configuration
 python-dotenv>=1.0.0
