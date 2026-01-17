@@ -1,0 +1,43 @@
+# Neon Pi Python Dependencies
+
+# Web Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+websockets==12.0
+python-multipart==0.0.6
+
+# Audio Processing
+pyaudio==0.2.14
+sounddevice==0.4.6
+numpy==1.26.3
+
+# Wake Word Detection
+openwakeword==0.5.1
+onnxruntime==1.16.3
+
+# Speech to Text (Whisper)
+faster-whisper==0.10.0
+
+# Google Gemini AI
+google-generativeai==0.3.2
+
+# ElevenLabs TTS
+elevenlabs==1.0.0
+
+# Spotify
+spotipy==2.23.0
+
+# MCP Client
+mcp==1.0.0
+
+# Configuration
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# HTTP Client
+httpx==0.26.0
+aiohttp==3.9.1
+
+# Utilities
+pydantic==2.5.3
+pydantic-settings==2.1.0
