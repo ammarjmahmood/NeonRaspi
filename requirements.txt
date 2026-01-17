@@ -11,6 +11,9 @@ pyaudio>=0.2.14
 sounddevice>=0.4.6
 numpy>=1.26.0
 
+# YouTube Music (Spotify fallback)
+ytmusicapi>=1.3.0
+
 # Wake Word Detection - installed separately in install.sh for Pi compatibility
 # openwakeword>=0.5.1
 # onnxruntime>=1.17.0

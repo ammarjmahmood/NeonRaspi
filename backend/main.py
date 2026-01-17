@@ -17,6 +17,8 @@ from .config import settings
 from .websocket_manager import manager
 from .gemini_client import gemini_client
 from .spotify_client import spotify_client
+from .youtube_music_client import youtube_music_client
+from .music_manager import music_manager
 from .tts import tts_engine
 from .speech_to_text import stt_engine
 from .wake_word import WakeWordDetector
@@ -31,7 +33,7 @@ class AppState:
         self.is_processing = False
         self.is_speaking = False
         self.wake_detector: WakeWordDetector = None
-        self.spotify_polling_task = None
+        self.music_polling_task = None
 
 
 state = AppState()
@@ -101,16 +103,15 @@ async def on_wake_word_detected():
         await manager.send_state_update("idle")
 
 
-async def spotify_polling_loop():
-    """Poll Spotify for now playing updates."""
+async def music_polling_loop():
+    """Poll music services for now playing updates."""
     while True:
         try:
-            if spotify_client.is_authenticated():
-                now_playing = await spotify_client.get_now_playing()
-                if now_playing:
-                    await manager.send_spotify_update(now_playing)
+            now_playing = await music_manager.get_now_playing()
+            if now_playing:
+                await manager.send_spotify_update(now_playing)
         except Exception as e:
-            print(f"[Spotify] Polling error: {e}")
+            print(f"[Music] Polling error: {e}")
         
         await asyncio.sleep(2)  # Poll every 2 seconds
 
@@ -123,8 +124,11 @@ async def lifespan(app: FastAPI):
     # Try to load cached Spotify token
     spotify_client.load_cached_token()
     
-    # Start Spotify polling
-    state.spotify_polling_task = asyncio.create_task(spotify_polling_loop())
+    # Try to load YouTube Music auth
+    youtube_music_client.load_auth()
+    
+    # Start music polling
+    state.music_polling_task = asyncio.create_task(music_polling_loop())
     
     # Initialize wake word detector
     state.wake_detector = WakeWordDetector(
@@ -143,8 +147,8 @@ async def lifespan(app: FastAPI):
     # Shutdown
     print("[Anton] Shutting down...")
     
-    if state.spotify_polling_task:
-        state.spotify_polling_task.cancel()
+    if state.music_polling_task:
+        state.music_polling_task.cancel()
     
     if state.wake_detector:
         state.wake_detector.stop()
@@ -184,7 +188,9 @@ async def root():
 async def get_status():
     """Get current system status."""
     return {
+        "music_services": music_manager.get_status(),
         "spotify_connected": spotify_client.is_authenticated(),
+        "youtube_music_connected": youtube_music_client.is_authenticated(),
         "wake_word_active": state.wake_detector.is_running() if state.wake_detector else False,
         "is_listening": state.is_listening,
         "is_processing": state.is_processing,

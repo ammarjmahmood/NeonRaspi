@@ -1,5 +1,5 @@
 """
-Neon Pi - Tool Executor
+Son of Anton - Tool Executor
 Handles execution of Gemini function calls.
 """
 import httpx
@@ -7,7 +7,7 @@ from datetime import datetime
 import pytz
 from typing import Dict, Any
 
-from .spotify_client import spotify_client
+from .music_manager import music_manager
 from .config import settings
 
 
@@ -31,36 +31,41 @@ class ToolExecutor:
         print(f"[Tools] Executing: {tool_name}({args})")
         
         try:
-            # Spotify tools
-            if tool_name == "spotify_play":
+            # Music tools (uses Spotify or YouTube Music automatically)
+            if tool_name == "play_music" or tool_name == "spotify_play":
                 query = args.get("query")
                 content_type = args.get("type", "track")
-                return await spotify_client.play(query, content_type)
+                return await music_manager.play(query, content_type)
             
-            elif tool_name == "spotify_pause":
-                return await spotify_client.pause()
+            elif tool_name == "pause_music" or tool_name == "spotify_pause":
+                return await music_manager.pause()
             
-            elif tool_name == "spotify_resume":
-                return await spotify_client.resume()
+            elif tool_name == "resume_music" or tool_name == "spotify_resume":
+                return await music_manager.resume()
             
-            elif tool_name == "spotify_skip":
-                return await spotify_client.skip()
+            elif tool_name == "skip_track" or tool_name == "spotify_skip":
+                return await music_manager.skip()
             
-            elif tool_name == "spotify_previous":
-                return await spotify_client.previous()
+            elif tool_name == "previous_track" or tool_name == "spotify_previous":
+                return await music_manager.previous()
             
-            elif tool_name == "spotify_volume":
+            elif tool_name == "set_volume" or tool_name == "spotify_volume":
                 volume = args.get("volume", 50)
-                return await spotify_client.set_volume(volume)
+                return await music_manager.set_volume(volume)
             
-            elif tool_name == "spotify_now_playing":
-                now = await spotify_client.get_now_playing()
+            elif tool_name == "now_playing" or tool_name == "spotify_now_playing":
+                now = await music_manager.get_now_playing()
                 if now:
+                    source = now.get("source", "music service")
                     if now.get("is_podcast"):
-                        return f"Currently playing podcast: {now['episode_name']} from {now['show_name']}"
+                        return f"Currently playing podcast: {now['episode_name']} from {now['show_name']} (on {source})"
                     else:
-                        return f"Currently playing: {now['track_name']} by {now['artist_name']}"
-                return "Nothing is currently playing on Spotify."
+                        return f"Currently playing: {now['track_name']} by {now['artist_name']} (on {source})"
+                return "Nothing is currently playing."
+            
+            elif tool_name == "search_music":
+                query = args.get("query", "")
+                return await music_manager.search(query)
             
             # Weather tool
             elif tool_name == "get_weather":
