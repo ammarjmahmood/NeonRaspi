@@ -28,8 +28,8 @@ class GeminiClient:
         self.chat = self.model.start_chat(history=[])
     
     def _get_system_prompt(self) -> str:
-        """Get the system prompt for Neon."""
-        return """You are Neon, a helpful and friendly AI voice assistant running on a Raspberry Pi.
+        """Get the system prompt for Anton."""
+        return """You are Anton, a helpful and friendly AI voice assistant running on a Raspberry Pi. You are the Son of Anton.
 
 Your personality:
 - Friendly, warm, and conversational

@@ -95,8 +95,7 @@ class SpeechToText:
                 # Calculate audio level
                 level = np.abs(indata).mean()
                 
-                if on_audio_level:
-                    asyncio.create_task(on_audio_level(float(level)))
+                # Note: Can't call async from sync callback, skip level updates
                 
                 # Check for silence
                 if level < silence_threshold and len(frames) > self._sample_rate:

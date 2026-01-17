@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-# Neon Pi - Installation Script
+# Son of Anton - Installation Script
 # One-command setup for Raspberry Pi
 # ============================================
 
@@ -14,15 +14,15 @@ BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
-# Neon ASCII Art
+# ASCII Art
 echo -e "${PURPLE}"
 cat << "EOF"
-    _   __                     ____  _ 
-   / | / /__  ____  ____     / __ \(_)
-  /  |/ / _ \/ __ \/ __ \   / /_/ / / 
- / /|  /  __/ /_/ / / / /  / ____/ /  
-/_/ |_/\___/\____/_/ /_/  /_/   /_/   
-                                      
+   _____               ___   __   ___        __            
+  / ___/__  ___    ___/ _/  / /  / _ | ___  / /____  ___   
+  \__ \/ _ \/ _ \  / _  /  / /__/ __ |/ _ \/ __/ _ \/ _ \  
+ ___/ / /__/ // / /_//_/  /____/_/ |_/_//_/\__/\___/_//_/  
+/____/\___/\___/                                           
+                                                           
     AI Voice Assistant for Raspberry Pi
 EOF
 echo -e "${NC}"
@@ -51,10 +51,10 @@ fi
 # ============================================
 echo -e "${BLUE}[2/8] Creating directories...${NC}"
 
-NEON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-mkdir -p "$NEON_DIR/logs"
-mkdir -p "$NEON_DIR/models"
-mkdir -p "$NEON_DIR/credentials"
+ANTON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+mkdir -p "$ANTON_DIR/logs"
+mkdir -p "$ANTON_DIR/models"
+mkdir -p "$ANTON_DIR/credentials"
 
 echo -e "${GREEN}✓ Directories created${NC}"
 
@@ -99,7 +99,7 @@ fi
 # ============================================
 echo -e "${BLUE}[4/8] Setting up Python environment...${NC}"
 
-cd "$NEON_DIR"
+cd "$ANTON_DIR"
 
 # Check Python version
 PYTHON_VERSION=$(python3 --version 2>&1 | awk '{print $2}')
@@ -163,7 +163,7 @@ echo -e "${BLUE}[7/8] Setting up configuration...${NC}"
 if [ ! -f ".env" ]; then
     cp .env.example .env
     echo -e "${YELLOW}⚠ Created .env file - please add your API keys:${NC}"
-    echo -e "   ${PURPLE}nano $NEON_DIR/.env${NC}"
+    echo -e "   ${PURPLE}nano $ANTON_DIR/.env${NC}"
 else
     echo -e "${GREEN}✓ .env file exists${NC}"
 fi
@@ -175,17 +175,17 @@ echo -e "${BLUE}[8/8] Setting up autostart...${NC}"
 
 if [ "$IS_RASPBERRY_PI" = true ]; then
     # Create systemd service file
-    sudo tee /etc/systemd/system/neonpi.service > /dev/null << SERVICEEOF
+    sudo tee /etc/systemd/system/son-of-anton.service > /dev/null << SERVICEEOF
 [Unit]
-Description=Neon Pi Voice Assistant
+Description=Son of Anton Voice Assistant
 After=network.target
 
 [Service]
 Type=simple
 User=$USER
-WorkingDirectory=$NEON_DIR
-Environment="PATH=$NEON_DIR/venv/bin:/usr/local/bin:/usr/bin:/bin"
-ExecStart=$NEON_DIR/venv/bin/python -m backend.main
+WorkingDirectory=$ANTON_DIR
+Environment="PATH=$ANTON_DIR/venv/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=$ANTON_DIR/venv/bin/python -m backend.main
 Restart=always
 RestartSec=10
 
@@ -195,17 +195,17 @@ SERVICEEOF
 
     # Create kiosk autostart
     mkdir -p ~/.config/autostart
-    cat > ~/.config/autostart/neon-kiosk.desktop << KIOSKEOF
+    cat > ~/.config/autostart/anton-kiosk.desktop << KIOSKEOF
 [Desktop Entry]
 Type=Application
-Name=Neon Kiosk
-Exec=bash $NEON_DIR/scripts/kiosk.sh
+Name=Son of Anton Kiosk
+Exec=bash $ANTON_DIR/scripts/kiosk.sh
 X-GNOME-Autostart-enabled=true
 KIOSKEOF
 
     # Create kiosk script
-    mkdir -p "$NEON_DIR/scripts"
-    cat > "$NEON_DIR/scripts/kiosk.sh" << 'KIOSKSCRIPT'
+    mkdir -p "$ANTON_DIR/scripts"
+    cat > "$ANTON_DIR/scripts/kiosk.sh" << 'KIOSKSCRIPT'
 #!/bin/bash
 # Wait for network and server to start
 sleep 10
@@ -228,11 +228,11 @@ chromium-browser \
     --start-fullscreen \
     http://localhost:8000
 KIOSKSCRIPT
-    chmod +x "$NEON_DIR/scripts/kiosk.sh"
+    chmod +x "$ANTON_DIR/scripts/kiosk.sh"
 
     # Enable and start service
     sudo systemctl daemon-reload
-    sudo systemctl enable neonpi.service
+    sudo systemctl enable son-of-anton.service
     
     echo -e "${GREEN}✓ Systemd service and kiosk autostart configured${NC}"
 else
@@ -244,20 +244,20 @@ fi
 # ============================================
 echo ""
 echo -e "${GREEN}============================================${NC}"
-echo -e "${GREEN}  Neon Pi Installation Complete!${NC}"
+echo -e "${GREEN}  Son of Anton Installation Complete!${NC}"
 echo -e "${GREEN}============================================${NC}"
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo -e "  1. Add your API keys to .env:"
-echo -e "     ${PURPLE}nano $NEON_DIR/.env${NC}"
+echo -e "     ${PURPLE}nano $ANTON_DIR/.env${NC}"
 echo ""
-echo -e "  2. Start Neon Pi:"
+echo -e "  2. Start Son of Anton:"
 echo -e "     ${PURPLE}./start.sh${NC}"
 echo ""
 echo -e "  3. Open in browser:"
 echo -e "     ${PURPLE}http://localhost:8000${NC}"
 echo ""
 if [ "$IS_RASPBERRY_PI" = true ]; then
-    echo -e "  ${GREEN}On next reboot, Neon will start automatically!${NC}"
+    echo -e "  ${GREEN}On next reboot, Anton will start automatically!${NC}"
 fi
 echo ""

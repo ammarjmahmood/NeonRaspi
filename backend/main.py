@@ -42,7 +42,7 @@ async def on_wake_word_detected():
     if state.is_processing or state.is_speaking:
         return
     
-    print("[Neon] Wake word detected!")
+    print("[Anton] Wake word detected!")
     state.is_listening = True
     
     # Notify UI
@@ -92,7 +92,7 @@ async def on_wake_word_detected():
             })
         
     except Exception as e:
-        print(f"[Neon] Error in wake word handler: {e}")
+        print(f"[Anton] Error in wake word handler: {e}")
         await manager.send_error(str(e))
     finally:
         state.is_listening = False
@@ -118,7 +118,7 @@ async def spotify_polling_loop():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler."""
-    print("[Neon] Starting up...")
+    print("[Anton] Starting up...")
     
     # Try to load cached Spotify token
     spotify_client.load_cached_token()
@@ -136,12 +136,12 @@ async def lifespan(app: FastAPI):
     # Note: Wake word detection will be started by the client
     # after the user grants microphone permission
     
-    print("[Neon] Ready! Say 'Hey Jarvis' to activate (Hey Neon coming soon)")
+    print("[Anton] Ready! Say 'Hey Jarvis' to activate (Hey Neon coming soon)")
     
     yield
     
     # Shutdown
-    print("[Neon] Shutting down...")
+    print("[Anton] Shutting down...")
     
     if state.spotify_polling_task:
         state.spotify_polling_task.cancel()

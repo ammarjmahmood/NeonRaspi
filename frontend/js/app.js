@@ -21,20 +21,20 @@ const elements = {
     // Orb
     orb: document.getElementById('orb'),
     orbPulse: document.getElementById('orbPulse'),
-    
+
     // Status
     statusText: document.getElementById('statusText'),
     statusSubtitle: document.getElementById('statusSubtitle'),
     connectionStatus: document.getElementById('connectionStatus'),
     timeDisplay: document.getElementById('timeDisplay'),
-    
+
     // Transcript
     transcriptContainer: document.getElementById('transcriptContainer'),
     userBubble: document.getElementById('userBubble'),
     userText: document.getElementById('userText'),
     neonBubble: document.getElementById('neonBubble'),
     neonText: document.getElementById('neonText'),
-    
+
     // Spotify
     spotifyPanel: document.getElementById('spotifyPanel'),
     albumArt: document.getElementById('albumArt'),
@@ -46,13 +46,13 @@ const elements = {
     totalTime: document.getElementById('totalTime'),
     spotifyConnectBtn: document.getElementById('spotifyConnectBtn'),
     lyricsContent: document.getElementById('lyricsContent'),
-    
+
     // History
     historyList: document.getElementById('historyList'),
-    
+
     // Buttons
     manualTrigger: document.getElementById('manualTrigger'),
-    
+
     // Audio
     audioPlayer: document.getElementById('audioPlayer')
 };
@@ -67,23 +67,23 @@ const maxReconnectAttempts = 10;
 function connectWebSocket() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/ws`;
-    
+
     console.log('[WS] Connecting to:', wsUrl);
-    
+
     ws = new WebSocket(wsUrl);
-    
+
     ws.onopen = () => {
         console.log('[WS] Connected');
         state.connected = true;
         reconnectAttempts = 0;
         updateConnectionStatus(true);
     };
-    
+
     ws.onclose = (event) => {
         console.log('[WS] Disconnected', event.code);
         state.connected = false;
         updateConnectionStatus(false);
-        
+
         // Attempt to reconnect
         if (reconnectAttempts < maxReconnectAttempts) {
             reconnectAttempts++;
@@ -92,11 +92,11 @@ function connectWebSocket() {
             setTimeout(connectWebSocket, delay);
         }
     };
-    
+
     ws.onerror = (error) => {
         console.error('[WS] Error:', error);
     };
-    
+
     ws.onmessage = (event) => {
         try {
             const message = JSON.parse(event.data);
@@ -118,33 +118,33 @@ function sendMessage(message) {
 // ============================================
 function handleMessage(message) {
     console.log('[WS] Message:', message.type);
-    
+
     switch (message.type) {
         case 'connected':
             state.spotifyConnected = message.spotify_authenticated;
             updateSpotifyStatus();
             break;
-            
+
         case 'state_update':
             updateState(message.state, message.data);
             break;
-            
+
         case 'transcript':
             showTranscript(message.text, message.is_final);
             break;
-            
+
         case 'response':
             showResponse(message.text);
             break;
-            
+
         case 'spotify':
             updateNowPlaying(message.data);
             break;
-            
+
         case 'audio':
             playAudio(message.data);
             break;
-            
+
         case 'error':
             showError(message.message);
             break;
@@ -156,10 +156,10 @@ function handleMessage(message) {
 // ============================================
 function updateState(newState, data = {}) {
     state.currentState = newState;
-    
+
     // Update orb class
     elements.orb.className = 'orb ' + newState;
-    
+
     // Update status text
     switch (newState) {
         case 'idle':
@@ -167,28 +167,28 @@ function updateState(newState, data = {}) {
             elements.statusSubtitle.textContent = 'Listening for wake word...';
             elements.transcriptContainer.classList.remove('visible');
             break;
-            
+
         case 'listening':
             elements.statusText.textContent = "I'm listening...";
             elements.statusSubtitle.textContent = 'Speak your command';
             break;
-            
+
         case 'processing':
             elements.statusText.textContent = 'Processing...';
             elements.statusSubtitle.textContent = 'Understanding your request';
             break;
-            
+
         case 'thinking':
             elements.statusText.textContent = 'Thinking...';
             elements.statusSubtitle.textContent = 'Generating response';
             break;
-            
+
         case 'speaking':
             elements.statusText.textContent = 'Speaking...';
             elements.statusSubtitle.textContent = '';
             break;
     }
-    
+
     // Handle audio level visualization
     if (data.level !== undefined) {
         visualizeAudioLevel(data.level);
@@ -209,7 +209,7 @@ function showTranscript(text, isFinal) {
     elements.userText.textContent = text;
     elements.userBubble.style.display = 'block';
     elements.neonBubble.style.display = 'none';
-    
+
     if (isFinal) {
         // Add to history
         addToHistory(text, null);
@@ -219,7 +219,7 @@ function showTranscript(text, isFinal) {
 function showResponse(text) {
     elements.neonText.textContent = text;
     elements.neonBubble.style.display = 'block';
-    
+
     // Update history with response
     updateHistoryResponse(text);
 }
@@ -254,7 +254,7 @@ function renderHistory() {
         `;
         return;
     }
-    
+
     elements.historyList.innerHTML = state.conversationHistory
         .slice(-10) // Show last 10
         .reverse()
@@ -278,9 +278,9 @@ function updateNowPlaying(data) {
         elements.albumPlaceholder.style.display = 'flex';
         return;
     }
-    
+
     state.nowPlaying = data;
-    
+
     // Update track info
     if (data.is_podcast) {
         elements.trackName.textContent = data.episode_name || 'Unknown Episode';
@@ -289,7 +289,7 @@ function updateNowPlaying(data) {
         elements.trackName.textContent = data.track_name || 'Unknown Track';
         elements.artistName.textContent = data.artist_name || 'Unknown Artist';
     }
-    
+
     // Update album art
     if (data.image_url) {
         elements.albumArt.src = data.image_url;
@@ -298,7 +298,7 @@ function updateNowPlaying(data) {
             elements.albumPlaceholder.style.display = 'none';
         };
     }
-    
+
     // Update progress
     if (data.duration_ms > 0) {
         const progress = (data.progress_ms / data.duration_ms) * 100;
@@ -326,7 +326,7 @@ async function connectSpotify() {
     try {
         const response = await fetch('/api/spotify/auth');
         const data = await response.json();
-        
+
         if (data.auth_url) {
             // Open Spotify auth in new window
             const authWindow = window.open(
@@ -334,7 +334,7 @@ async function connectSpotify() {
                 'Spotify Auth',
                 'width=500,height=700,menubar=no,toolbar=no'
             );
-            
+
             // Poll for auth completion
             const pollTimer = setInterval(() => {
                 if (authWindow.closed) {
@@ -356,17 +356,17 @@ function playAudio(hexData) {
     try {
         // Convert hex string to Uint8Array
         const bytes = new Uint8Array(hexData.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-        
+
         // Create blob and URL
         const blob = new Blob([bytes], { type: 'audio/mpeg' });
         const url = URL.createObjectURL(blob);
-        
+
         // Play audio
         elements.audioPlayer.src = url;
         elements.audioPlayer.play()
             .then(() => console.log('[Audio] Playing'))
             .catch(e => console.error('[Audio] Play error:', e));
-        
+
         // Clean up URL after playback
         elements.audioPlayer.onended = () => {
             URL.revokeObjectURL(url);
@@ -404,7 +404,7 @@ function showError(message) {
     console.error('[Error]', message);
     elements.statusText.textContent = 'Error';
     elements.statusSubtitle.textContent = message;
-    
+
     // Reset after 3 seconds
     setTimeout(() => {
         updateState('idle');
@@ -435,14 +435,14 @@ function setupEventListeners() {
         console.log('[UI] Manual trigger clicked');
         sendMessage({ type: 'start_listening' });
     });
-    
+
     // Spotify connect button
     elements.spotifyConnectBtn.addEventListener('click', () => {
         if (!state.spotifyConnected) {
             connectSpotify();
         }
     });
-    
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         // Space bar to trigger listening
@@ -459,7 +459,7 @@ function setupEventListeners() {
 function createParticles() {
     const container = document.getElementById('particles');
     const particleCount = 50;
-    
+
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
@@ -476,7 +476,7 @@ function createParticles() {
         `;
         container.appendChild(particle);
     }
-    
+
     // Add floating animation
     const style = document.createElement('style');
     style.textContent = `
@@ -506,25 +506,25 @@ function createParticles() {
 // Initialization
 // ============================================
 function init() {
-    console.log('[Neon] Initializing...');
-    
+    console.log('[Anton] Initializing...');
+
     // Create background particles
     createParticles();
-    
+
     // Setup event listeners
     setupEventListeners();
-    
+
     // Update time every minute
     updateTime();
     setInterval(updateTime, 60000);
-    
+
     // Connect WebSocket
     connectWebSocket();
-    
+
     // Render initial history
     renderHistory();
-    
-    console.log('[Neon] Ready!');
+
+    console.log('[Anton] Ready!');
 }
 
 // Start when DOM is ready

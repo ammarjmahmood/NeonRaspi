@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-# Neon Pi - Start Script
+# Son of Anton - Start Script
 # ============================================
 
 # Colors
@@ -14,11 +14,11 @@ cd "$SCRIPT_DIR"
 
 echo -e "${PURPLE}"
 cat << "EOF"
-    _   __                     ____  _ 
-   / | / /__  ____  ____     / __ \(_)
-  /  |/ / _ \/ __ \/ __ \   / /_/ / / 
- / /|  /  __/ /_/ / / / /  / ____/ /  
-/_/ |_/\___/\____/_/ /_/  /_/   /_/   
+   _____               ___   __   ___        __            
+  / ___/__  ___    ___/ _/  / /  / _ | ___  / /____  ___   
+  \__ \/ _ \/ _ \  / _  /  / /__/ __ |/ _ \/ __/ _ \/ _ \  
+ ___/ / /__/ // / /_//_/  /____/_/ |_/_//_/\__/\___/_//_/  
+/____/\___/\___/                                           
 EOF
 echo -e "${NC}"
 
@@ -38,7 +38,7 @@ else
     exit 1
 fi
 
-echo -e "${GREEN}Starting Neon Pi...${NC}"
+echo -e "${GREEN}Starting Son of Anton...${NC}"
 echo -e "  Server: http://localhost:8000"
 echo -e "  Press Ctrl+C to stop"
 echo ""

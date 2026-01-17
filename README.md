@@ -1,12 +1,10 @@
-# Neon Pi - AI Voice Assistant for Raspberry Pi
+# Son of Anton - AI Voice Assistant for Raspberry Pi
 
 A premium voice-controlled AI assistant with Google Gemini, ElevenLabs natural voice, Spotify integration, and MCP server support.
 
-![Neon Pi Banner](./docs/banner.png)
-
 ## ✨ Features
 
-- **🎤 Always Listening** - Wake word detection ("Hey Jarvis" temporarily, "Hey Neon" coming soon)
+- **🎤 Always Listening** - Wake word detection ("Hey Jarvis" temporarily, custom wake word coming soon)
 - **🧠 Google Gemini AI** - Powerful conversational AI for answering questions
 - **🔊 ElevenLabs Voice** - Natural, human-like voice responses
 - **🎵 Spotify Integration** - Control music, view now playing with album art & lyrics
@@ -21,7 +19,7 @@ A premium voice-controlled AI assistant with Google Gemini, ElevenLabs natural v
 ```bash
 # Clone the repository
 git clone https://github.com/ammarjmahmood/NeonRaspi.git
-cd neonpi
+cd NeonRaspi
 
 # Run the install script
 chmod +x install.sh
@@ -39,8 +37,8 @@ nano .env  # Add your API keys
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/neonpi.git
-cd neonpi
+git clone https://github.com/ammarjmahmood/NeonRaspi.git
+cd NeonRaspi
 
 # Create virtual environment
 python3 -m venv venv
@@ -70,7 +68,7 @@ Then open http://localhost:8000 in your browser.
 ## 📁 Project Structure
 
 ```
-neonpi/
+son-of-anton/
 ├── backend/          # Python FastAPI server
 │   ├── main.py       # Entry point
 │   ├── wake_word.py  # Wake word detection
